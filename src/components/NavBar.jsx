@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 const routes = [
   { path: "/", name: "首頁" },
@@ -22,7 +22,6 @@ export default function NavBar() {
           </ul>
         </div>
       </nav>
-      <Outlet />
     </>
   )
 }
