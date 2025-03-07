@@ -7,7 +7,6 @@ export default function FonterLayout() {
     <>
       <NavBar />
       <main>
-        {/* {children} */}
         <Outlet />
       </main>
       <Footer />

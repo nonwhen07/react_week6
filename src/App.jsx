@@ -316,6 +316,7 @@ function App() {
           </div>
         </div>
 
+        {/* cartTable */}
         {
           carts.length > 0 ? 
           <>
@@ -397,9 +398,6 @@ function App() {
             <p>🛒 購物車是空的</p>
           </div>)
         }
-
-        {/* cartTable */}
-        
         
       </div>
       {/* orderTable */}

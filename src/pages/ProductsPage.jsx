@@ -1,13 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Modal } from "bootstrap";
-
 import ReactLoading from 'react-loading';
-
-
-
+import { Link } from "react-router-dom";
 
 export default function ProductsPage() {
+
   const BASE_URL = import.meta.env.VITE_BASE_URL;
   const API_PATH = import.meta.env.VITE_API_PATH;
 
@@ -46,10 +44,13 @@ export default function ProductsPage() {
     const modalInstance = Modal.getInstance(productModalRef.current);
     modalInstance.hide();
   };
+  const [qtySelect, setQtySelect] = useState(1);
   const handleSeeMore = (product) => {
     setTempProduct(product);
     openModal();
   };
+
+  
 
   //加入購物車
   const addCartItem = async (product_id, qty = 1, source = "table") => {
@@ -120,6 +121,13 @@ export default function ProductsPage() {
                       >
                         查看更多
                       </button>
+                      <Link
+                        to={`/product/${product.id}`}
+                        type="button"
+                        className="btn btn-outline-secondary"
+                      >
+                        查看更多(分頁)
+                      </Link>
                       <button disabled={loadingItems[product.id]?.table} onClick={() => addCartItem(product.id, 1, "table")} type="button" 
                         className="btn btn-outline-danger d-flex align-items-center">
                         加到購物車
