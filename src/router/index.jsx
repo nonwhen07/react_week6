@@ -19,7 +19,7 @@ const router = createHashRouter([
         element: <ProductsPage />,
       },
       { // 產品細項
-        path: 'product:id',
+        path: 'product/:id',
         element: <ProductDetailPage />,
       },
       {

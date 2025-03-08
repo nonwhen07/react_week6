@@ -1,14 +1,26 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { Modal } from "bootstrap";
+import { useForm } from "react-hook-form";
 import ReactLoading from 'react-loading';
+import axios from "axios";
+
+
 
 export default function CartPage(){
   const BASE_URL = import.meta.env.VITE_BASE_URL;
   const API_PATH = import.meta.env.VITE_API_PATH;
 
   const [carts, setCarts] = useState([]);
+  const { register, handleSubmit, formState:{ errors }, reset } = useForm();
+
+
   const [isScreenLoading, setIsScreenLoading] = useState(false);
+
+  useEffect(() => {
+    setIsScreenLoading(true);
+    //畫面渲染後初步載入購物車
+    getCarts();
+  }, []);
+
 
   //取得cart
   const getCarts = async()=>{
@@ -23,16 +35,7 @@ export default function CartPage(){
       setIsScreenLoading(false);
     }
   }
-  useEffect(() => {
-    setIsScreenLoading(true);
-    //畫面渲染後初步載入購物車
-    getCarts();
-  }, []);
-
-
-
-
-
+  
   //調整購物車品項
   const editCartItem = async (cart_id, product_id, qty = 1) => {
     setIsScreenLoading(true);
@@ -85,6 +88,41 @@ export default function CartPage(){
     } catch (error) {
       console.error(error);
       alert("刪除全部購物車失敗");
+    }finally{
+      setIsScreenLoading(false);
+    }
+  }
+
+
+
+  //送出訂單 + Submit事件驅動
+  const onSubmit =  handleSubmit((data) => {
+    if(carts.length < 1) { // 如果 購物車為空，直接返回不做任何處理
+      alert("請確認購物車是否為空");
+      // console.warn("請確認購物車是否為空");
+      return;
+    }
+
+    const { message, ...user } = data; //data資料"解構"成message，剩下的打包一起變成user
+    const userinfo = {
+      data: {
+        user: user,
+        message: message
+      }
+    }
+    checkOut(userinfo);  
+  });
+  const checkOut = async (orderData) => {
+    setIsScreenLoading(true);
+    try {
+      await axios.post(`${BASE_URL}/v2/api/${API_PATH}/order`, orderData);
+      //成功後刷新購物車，等待下一位客人
+      getCarts();
+      reset(); // 提交成功後重設表單
+      alert("已送出訂單");
+    } catch (error) {
+      console.error(error);
+      alert("訂單送出失敗");
     }finally{
       setIsScreenLoading(false);
     }
@@ -175,7 +213,7 @@ export default function CartPage(){
         </div>
 
         {/* orderFormTable */}
-        {/* <div className="my-5 row justify-content-center">
+        <div className="my-5 row justify-content-center">
           <form onSubmit={onSubmit} className="col-md-6">
             <div className="mb-3">
               <label htmlFor="email" className="form-label">
@@ -269,7 +307,8 @@ export default function CartPage(){
               </button>
             </div>
           </form>
-        </div> */}
+        </div>
+        
       </div>
 
 
