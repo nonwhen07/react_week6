@@ -1,8 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Modal } from 'bootstrap';
+import { useNavigate } from "react-router-dom";
+import ReactLoading from 'react-loading';
 
 export default function DashboardPage() {
+  // 初始化 navigate
+  const navigate = useNavigate(); 
   // 環境變數
   const baseURL = import.meta.env.VITE_BASE_URL;
   const apiPath = import.meta.env.VITE_API_PATH;
@@ -12,7 +16,7 @@ export default function DashboardPage() {
   const deleteModalRef = useRef(null);
 
   // 狀態管理 (State)
-  const [isAuth, setIsAuth] = useState(false);
+  // const [isAuth, setIsAuth] = useState(false);
   const [products, setProducts] = useState([]);
   //Modal 資料狀態的預設值
   const defaultModalState = {
@@ -29,44 +33,40 @@ export default function DashboardPage() {
   };
   const [tempProduct, setTempProduct] = useState(defaultModalState);
   const [modalMode, setModalMode] = useState(null);
+  const [isScreenLoading, setIsScreenLoading] = useState(false);
 
   // API & 認證相關函式
   const checkLogin = () => {
+    setIsScreenLoading(true);
     axios.post(`${baseURL}/v2/api/user/check`)
     .then(() => {
-      setIsAuth(true);
+      // setIsAuth(true);
       getProducts();
     })
     .catch((error) => {
       console.error(error);
-      setIsAuth(false);
+      // setIsAuth(false);
+      alert('請先登入，將導向登入頁面');
+      navigate("/login"); // **確認沒有登入就跳轉到 LoginPage**
+    })
+    .finally(() => {
+        setIsScreenLoading(false);
     });
   };
   const getProducts = () => {
+    setIsScreenLoading(true);
     axios.get(`${baseURL}/v2/api/${apiPath}/admin/products`)
       .then((res) => {
         setProducts(res.data.products);
       })
       .catch((error) => {
         console.error(error);
+      }).finally(() => {
+        setIsScreenLoading(false);
       });
-    // getall寫法
-    // axios.get(`${baseURL}/v2/api/${apiPath}/admin/products/all`)
-    //   .then((res) => {
-    //     const productsData = res.data.products;
-    //     const productsArray = Object.keys(productsData).map((key) => ({
-    //       ...productsData[key], // 產品的詳細資料
-    //       id: key, // 把 id 加回來
-    //     }));
-    //     setProducts(productsArray);
-    //   })
-    //   .catch((error) => {
-    //     console.error(error);
-    //   });
   };
   
-  // 表單變更事件
-  // Modal表單
+  // 表單變更事件 - Modal表單
   const handleModalInputChange = (e) =>{
     const { name, value, checked, type } = e.target;
     setTempProduct((prev) => ({
@@ -145,8 +145,6 @@ export default function DashboardPage() {
   const handleUpdateProduct = async () => {
     //const apiCall = modalMode === 'create' ? createProduct : updateProduct; // 判斷是新增還是編輯
     try {
-      // await createProduct();
-      // await apiCall();
       await (modalMode === 'create' ? createProduct() : updateProduct()); // 179行 + 182行簡化
       getProducts();
       handleCloseProductModal(); // 關閉 Modal、重新取得商品列表
@@ -236,7 +234,8 @@ export default function DashboardPage() {
 
   return(
     <>
-      {isAuth ? (
+    {/* { 
+      isAuth ? (
         <div className="container py-5">
           <div className="d-flex justify-content-between">
             <h2>產品列表</h2>
@@ -276,7 +275,51 @@ export default function DashboardPage() {
             </tbody>
           </table>
         </div>
-      ) : <LoginPage getProducts={getProducts} setIsAuth={setIsAuth} />}
+        ) : (
+        <div className="container">
+          <h1>確認登入中請稍後</h1>
+        </div>
+      ) 
+    } */}
+      <div className="container py-5">
+        <div className="d-flex justify-content-between">
+          <h2>產品列表</h2>
+          <button className="btn btn-primary" onClick={() => {handleOpenProductModal('create')}}>新增產品</button>
+        </div>
+        <table className="table mt-4">
+          <thead>
+            <tr>
+              <th width="120">分類</th>
+              <th width="500">產品名稱</th>
+              <th width="120">原價</th>
+              <th width="120">售價</th>
+              <th width="100">是否啟用</th>
+              <th width="120"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {products.map((product) => (
+              <tr key={product.id}>
+                <th scope="row">{product.category}</th>
+                <td>{product.title}</td>
+                <td>{product.origin_price}</td>
+                <td>{product.price}</td>
+                <td>
+                  {
+                    product.is_enabled ? <span className="text-success">啟用</span> : <span>未啟用</span>
+                  }
+                </td>
+                <td>
+                  <div className="btn-group">
+                    <button type="button" onClick={() => {handleOpenProductModal('edit', product)}} className="btn btn-outline-primary btn-sm">編輯</button>
+                    <button type="button" onClick={() => {handleOpenDeleteModal(product)}} className="btn btn-outline-danger btn-sm">刪除</button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       <div id="productModal" ref={productModalRef} className="modal" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
         <div className="modal-dialog modal-dialog-centered modal-xl">
@@ -519,6 +562,21 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+      {/* ScreenLoading */}
+      {
+        isScreenLoading && (
+        <div className="d-flex justify-content-center align-items-center"
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(255,255,255,0.3)",
+            zIndex: 999,
+          }}
+        >
+          <ReactLoading type="spin" color="black" width="4rem" height="4rem" />
+        </div>
+        )
+      }
     </>
   )
 }

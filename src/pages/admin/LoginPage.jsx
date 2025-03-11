@@ -1,27 +1,37 @@
-import { useState } from 'react';
-import axios from 'axios';
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useState } from "react";
+import ReactLoading from 'react-loading';
 
-export default function LoginPage({ getProducts, setIsAuth }) {
-  
+export default function LoginPage() {
+  // 初始化 navigate
+  const navigate = useNavigate();
   // 環境變數
   const baseURL = import.meta.env.VITE_BASE_URL;
   // const apiPath = import.meta.env.VITE_API_PATH;
   const [account, setAccount] = useState({ username: "example@test.com", password: "example"});
 
+  
+  const [isScreenLoading, setIsScreenLoading] = useState(false);
+
   // 登入表單 - 登入submit事件
   const handleLogin = (e) =>{
+    setIsScreenLoading(true);
     e.preventDefault();
     axios.post(`${baseURL}/v2/admin/signin`, account)  
     .then((res) => {
       const { token, expired } = res.data;
       document.cookie = `hexToken4=${token}; userLanguage=en; userPreference=darkMode; expires=${new Date(expired)}`; // 設定 cookie
       axios.defaults.headers.common['Authorization'] = token;
-      getProducts(); // 查詢商品資料列表
-      setIsAuth(true); // 設定登入狀態
+      // getProducts(); // 查詢商品資料列表
+      // setIsAuth(true); // 設定登入狀態
+      navigate("/dashboard"); // **登入成功後跳轉到 Dashboard**
     })
     .catch((error) => {
       console.error(error);
       alert('登入失敗');
+    }).finally(()=>{
+      setIsScreenLoading(false);
     });
   };
   // 登入表單 - Input變動
@@ -70,6 +80,21 @@ export default function LoginPage({ getProducts, setIsAuth }) {
           </form>
         </div>
       </div>
+      {/* ScreenLoading */}
+      {
+        isScreenLoading && (
+        <div className="d-flex justify-content-center align-items-center"
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(255,255,255,0.3)",
+            zIndex: 999,
+          }}
+        >
+          <ReactLoading type="spin" color="black" width="4rem" height="4rem" />
+        </div>
+        )
+      }
     </>
   )
 }
