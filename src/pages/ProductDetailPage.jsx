@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import ReactLoading from 'react-loading';
+import { useParams } from 'react-router-dom';
 
-
-export default function ProductDetailPage(ProductID){
+export default function ProductDetailPage(){
 
   const BASE_URL = import.meta.env.VITE_BASE_URL;
   const API_PATH = import.meta.env.VITE_API_PATH;
+
+  const { product_id } = useParams(); // 取得路由參數
 
   const [product, setProduct] = useState([]);
   const [qtySelect, setQtySelect] = useState(1);
@@ -18,7 +20,7 @@ export default function ProductDetailPage(ProductID){
     setIsScreenLoading(true);
     const getProductDetail = async () => {
       try {
-        const res = await axios.get(`${BASE_URL}/v2/api/${API_PATH}/product/${ProductID}`);
+        const res = await axios.get(`${BASE_URL}/v2/api/${API_PATH}/product/${product_id}`);
         setProduct(res.data.product);
       } catch (error) {
         console.error(error);
@@ -40,7 +42,6 @@ export default function ProductDetailPage(ProductID){
       return;
     }
     setIsLoading(true);
-
     try {
       await axios.post(`${BASE_URL}/v2/api/${API_PATH}/cart`, {
         data: {
@@ -77,8 +78,7 @@ export default function ProductDetailPage(ProductID){
                 value={qtySelect}
                 onChange={(e) => setQtySelect(e.target.value)}
                 id="qtySelect"
-                className="form-select"
-              >
+                className="form-select">
                 {Array.from({ length: 10 }).map((_, index) => (
                   <option key={index} value={index + 1}>
                     {index + 1}
@@ -89,10 +89,10 @@ export default function ProductDetailPage(ProductID){
               <button type="button" 
                 disabled={isLoading}
                 onClick={() => addCartItem(product.id, qtySelect)} 
-                className="btn btn-primary">
+                className="btn btn-primary d-flex align-items-center">
                 加入購物車
                 {
-                  isLoading && ( <ReactLoading type={"spin"} color={"#000"} height={"1.5rem"} width={"1.5rem"} /> )
+                  isLoading && ( <ReactLoading type="spin" color="#000" height="1.25rem" width="1.25rem" /> )
                 }
               </button>
 

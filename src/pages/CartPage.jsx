@@ -5,14 +5,13 @@ import axios from "axios";
 
 
 
-export default function CartPage(){
+export default function CartPage() {
+
   const BASE_URL = import.meta.env.VITE_BASE_URL;
   const API_PATH = import.meta.env.VITE_API_PATH;
 
   const [carts, setCarts] = useState([]);
   const { register, handleSubmit, formState:{ errors }, reset } = useForm();
-
-
   const [isScreenLoading, setIsScreenLoading] = useState(false);
 
   useEffect(() => {
@@ -23,7 +22,7 @@ export default function CartPage(){
 
 
   //取得cart
-  const getCarts = async()=>{
+  const getCarts = async () => {
     setIsScreenLoading(true);
     try {
       const res = await axios.get(`${BASE_URL}/v2/api/${API_PATH}/cart`);
@@ -35,7 +34,6 @@ export default function CartPage(){
       setIsScreenLoading(false);
     }
   }
-  
   //調整購物車品項
   const editCartItem = async (cart_id, product_id, qty = 1) => {
     setIsScreenLoading(true);
@@ -93,13 +91,11 @@ export default function CartPage(){
     }
   }
 
-
-
   //送出訂單 + Submit事件驅動
   const onSubmit =  handleSubmit((data) => {
     if(carts.length < 1) { // 如果 購物車為空，直接返回不做任何處理
-      alert("請確認購物車是否為空");
-      // console.warn("請確認購物車是否為空");
+      alert("您的購物車是空的");
+      console.warn("您的購物車是空的");
       return;
     }
 

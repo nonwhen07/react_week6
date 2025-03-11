@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import { Modal } from "bootstrap";
+// import { Modal } from "bootstrap";
 import ReactLoading from 'react-loading';
 import { Link } from "react-router-dom";
 
@@ -10,7 +10,7 @@ export default function ProductsPage() {
   const API_PATH = import.meta.env.VITE_API_PATH;
 
   const [products, setProducts] = useState([]);
-  const [tempProduct, setTempProduct] = useState([]);
+  // const [tempProduct, setTempProduct] = useState([]);
   const [isScreenLoading, setIsScreenLoading] = useState(false);
   // const [isLoading, setIsLoading] = useState(false); //改用下面的loadingItems，先儲存商品ID來標定loading位置
   const [loadingItems, setLoadingItems] = useState({}); // 用物件儲存各商品的 Loading 狀態
@@ -32,23 +32,24 @@ export default function ProductsPage() {
     getProducts();
   }, []);
 
-  const productModalRef = useRef(null);
-  useEffect(() => {
-    new Modal(productModalRef.current, { backdrop: false });
-  }, []);
-  const openModal = () => {
-    const modalInstance = Modal.getInstance(productModalRef.current);
-    modalInstance.show();
-  };
-  const closeModal = () => {
-    const modalInstance = Modal.getInstance(productModalRef.current);
-    modalInstance.hide();
-  };
-  const [qtySelect, setQtySelect] = useState(1);
-  const handleSeeMore = (product) => {
-    setTempProduct(product);
-    openModal();
-  };
+  // const productModalRef = useRef(null);
+  // useEffect(() => {
+  //   new Modal(productModalRef.current, { backdrop: false });
+  // }, []);
+  // const openModal = () => {
+  //   const modalInstance = Modal.getInstance(productModalRef.current);
+  //   modalInstance.show();
+  // };
+  // const closeModal = () => {
+  //   const modalInstance = Modal.getInstance(productModalRef.current);
+  //   modalInstance.hide();
+  // };
+
+  // const [qtySelect, setQtySelect] = useState(1);
+  // const handleSeeMore = (product) => {
+  //   setTempProduct(product);
+  //   openModal();
+  // };
 
   
 
@@ -72,7 +73,7 @@ export default function ProductsPage() {
           qty: Number(qty),
         },
       });
-      closeModal();
+      //closeModal();
     } catch (error) {
       console.error(error);
       alert("加入購物車失敗");
@@ -114,19 +115,19 @@ export default function ProductsPage() {
                   </td>
                   <td>
                     <div className="btn-group btn-group-sm">
-                      <button
+                      {/* <button
                         onClick={() => handleSeeMore(product)}
                         type="button"
                         className="btn btn-outline-secondary"
                       >
                         查看更多
-                      </button>
+                      </button> */}
                       <Link
                         to={`/product/${product.id}`}
                         type="button"
                         className="btn btn-outline-secondary"
                       >
-                        查看更多(分頁)
+                        查看更多
                       </Link>
                       <button disabled={loadingItems[product.id]?.table} onClick={() => addCartItem(product.id, 1, "table")} type="button" 
                         className="btn btn-outline-danger d-flex align-items-center">
@@ -149,7 +150,7 @@ export default function ProductsPage() {
           </table>
           
           {/* productModalRef */}
-          <div ref={productModalRef}
+          {/* <div ref={productModalRef}
             style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
             className="modal fade"
             id="productModal"
@@ -211,7 +212,10 @@ export default function ProductsPage() {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
+
+
+
         </div>
       </div>
       {
