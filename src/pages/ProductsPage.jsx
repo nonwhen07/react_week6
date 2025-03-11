@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-// import { Modal } from "bootstrap";
 import ReactLoading from 'react-loading';
 import { Link } from "react-router-dom";
 

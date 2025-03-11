@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { Modal } from "bootstrap";
+import ReactLoading from 'react-loading';
 import axios from "axios";
+import { Modal } from "bootstrap";
 
 
 
@@ -13,6 +14,8 @@ export default function ProductModal ({modalMode, tempProduct, getProducts, isOp
   const [modalData, setModalData] = useState(tempProduct);
   // Modal Ref 定義
   const productModalRef = useRef(null); 
+
+  const [isLoading, setIsLoading] = useState(false);
 
   // Modal表單-變更事件
   const handleModalInputChange = (e) => {
@@ -73,6 +76,7 @@ export default function ProductModal ({modalMode, tempProduct, getProducts, isOp
 
   // 新增、編輯、刪除產品動點
   const handleUpdateProduct = async () => {
+    setIsLoading(true);
     const apiCall = modalMode === "create" ? createProduct : updateProduct;
     try {
       await apiCall();
@@ -81,6 +85,8 @@ export default function ProductModal ({modalMode, tempProduct, getProducts, isOp
     } catch (error) {
       console.error(error);
       alert("更新產品失敗");
+    } finally{
+      setIsLoading(false);
     }
   };
   // 新增
@@ -414,9 +420,13 @@ export default function ProductModal ({modalMode, tempProduct, getProducts, isOp
             <button
               type="button"
               onClick={handleUpdateProduct}
-              className="btn btn-primary"
+              className="btn btn-primary d-flex align-items-center justify-content-center"
+              style={{ lineHeight: "normal" }} // 修正 line-height 導致的錯位
             >
-              確認
+              {isLoading && (
+                <ReactLoading type="spin" color="#fff" height="1.25rem" width="1.25rem" />
+              )}
+              <span className="ms-2">確認</span>
             </button>
             <button
               type="button"

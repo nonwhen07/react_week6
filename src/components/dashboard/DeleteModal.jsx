@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
+import ReactLoading from 'react-loading';
 import { Modal } from "bootstrap";
 import axios from "axios";
 
@@ -11,6 +12,8 @@ export default function DeleteModal({ tempProduct, getProducts, isOpen, setIsOpe
   // Modal Ref 定義
   const deleteModalRef = useRef(null);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleCloseDeleteModal = () => {
     // Modal.getInstance(deleteModalRef.current).hide();
     setIsOpen(false);
@@ -18,6 +21,7 @@ export default function DeleteModal({ tempProduct, getProducts, isOpen, setIsOpe
 
   // 刪除產品動點
   const handleDeleteProduct = async () => {
+    setIsLoading(true);
     try {
       await deleteProduct();
       getProducts();
@@ -25,6 +29,8 @@ export default function DeleteModal({ tempProduct, getProducts, isOpen, setIsOpe
     } catch (error) {
       console.error(error);
       alert("刪除商品失敗");
+    } finally{
+      setIsLoading(false);
     }
   };
   // 刪除
@@ -83,8 +89,12 @@ export default function DeleteModal({ tempProduct, getProducts, isOpen, setIsOpe
             <button
               type="button"
               onClick={handleDeleteProduct}
-              className="btn btn-danger"
+              className="btn btn-danger d-flex align-items-center justify-content-center"
+              style={{ lineHeight: "normal" }} // 修正 line-height 導致的錯位
             >
+              {isLoading && (
+                <ReactLoading type="spin" color="#fff" height="1.25rem" width="1.25rem" />
+              )}
               刪除
             </button>
             <button

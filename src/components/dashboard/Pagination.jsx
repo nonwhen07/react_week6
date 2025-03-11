@@ -1,4 +1,4 @@
-
+import { Link } from "react-router-dom"
 
 export default function Pagination ({ pageInfo, handlePageChange }) {
   
@@ -7,40 +7,49 @@ export default function Pagination ({ pageInfo, handlePageChange }) {
       <nav className={`${pageInfo.total_pages === 1 ? "d-none" : ""}`}>
         <ul className="pagination">
           <li className={`page-item ${!pageInfo.has_pre && "disabled"}`}>
-            <a
-              onClick={() => handlePageChange(pageInfo.current_page - 1)}
-              className="page-link"
-              href="#"
+            {/* <a href="#" className="page-link"
+              onClick={(e) => {
+                e.preventDefault(); // 阻止跳回 `/`
+                handlePageChange(pageInfo.current_page - 1);
+              }}
+              
             >
               上一頁
-            </a>
+            </a> */}
+  
+            <button type="button" onClick={() => handlePageChange(pageInfo.current_page - 1)} className="page-link">
+              上一頁
+            </button>
+            {/* <Link to={`?page=${pageInfo.current_page - 1}`} className="page-link">
+              上一頁
+            </Link>
+            <button
+              onClick={() => handlePageChange(pageInfo.current_page - 1)}
+              className="page-link"
+              disabled={!pageInfo.has_pre}
+            >
+              上一頁
+            </button> */}
           </li>
           {Array.from({ length: pageInfo.total_pages }).map(
             (_, index) => (
-              <li
-                key={index}
+              <li key={index}
                 className={`pageitem ${
                   pageInfo.current_page === index + 1 ? "active" : ""
                 }`}
               >
-                <a
-                  onClick={() => handlePageChange(index + 1)}
-                  className="page-link"
-                  href="#"
-                >
+                
+                <button type="button" onClick={() => handlePageChange(index + 1)} className="page-link">
                   {index + 1}
-                </a>
+                </button>
+                
               </li>
             )
           )}
           <li className={`page-item ${!pageInfo.has_next && "disabled"}`}>
-            <a
-              onClick={() => handlePageChange(pageInfo.current_page + 1)}
-              className="page-link"
-              href="#"
-            >
+            <button type="button" onClick={() => handlePageChange(pageInfo.current_page + 1)} className="page-link">
               下一頁
-            </a>
+            </button>
           </li>
         </ul>
       </nav>
