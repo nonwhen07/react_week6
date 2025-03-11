@@ -1,5 +1,6 @@
 // src/layouts/FooterLayout.jsx
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Footer() {
   return (
@@ -9,8 +10,8 @@ export default function Footer() {
           <div className="">
             <p className="mb-0">
               &copy; {new Date().getFullYear()} 本網站僅供個人作品使用，不提供商業用途
-              {/* <span>|</span>
-              <a href="#/login" class="" target="_blank">登入後台</a> */}
+              <span> | </span>
+              <Link className="text-light text-decoration-none" to={'/login'}>登入後台</Link>
             </p>
           </div>
           {/* <div className="d-flex justify-content-center gap-3">

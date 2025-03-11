@@ -8,7 +8,9 @@ export default function ProductDetailPage(){
   const BASE_URL = import.meta.env.VITE_BASE_URL;
   const API_PATH = import.meta.env.VITE_API_PATH;
 
-  const { product_id } = useParams(); // 取得路由參數
+  // 根據路由的參數命名來取得該命名參數，ex path: 'product/:product_id'
+  // 如果是多個參數ex path: 'product/:product_id/:typemode'，則取得方式為 const { product_id, typemode } = useParams();
+  const { product_id } = useParams(); // 根據陸游的參數命名來取得該命名參數，expath: 'product/:product_id',
 
   const [product, setProduct] = useState([]);
   const [qtySelect, setQtySelect] = useState(1);
